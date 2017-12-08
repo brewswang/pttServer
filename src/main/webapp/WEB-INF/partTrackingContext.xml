@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+						http://www.springframework.org/schema/util 
+						http://www.springframework.org/schema/util/spring-util-4.1.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+
+	<bean id="pttEntityManagerFactoryBean"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="pttDataSource" />
+		<!--   <property name="packagesToScan" value="com.dventus.ptt.*:com.dventus.common.*" /> -->
+		 <property name="persistenceUnitName"
+			value="ptt-persistenceunit" />
+		
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.show_sql">${showSql}</prop>
+				<prop key="hibernate.dialect">${databasePlatform}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="pttDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${pttmysqlUrl}" />
+		<property name="username" value="${username}" />
+		<property name="password" value="${password}" />
+	</bean>
+
+	<bean id="pttTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="pttEntityManagerFactoryBean" />
+	</bean>
+    
+	<bean id="pttDao" class="com.dventus.dao.common.Impl.GenericDaoImpl">
+		<constructor-arg ref="pttEntityManagerFactoryBean"/>
+	</bean>
+
+	<bean id="common" class="com.dventus.api.common.resource.CommonResourceFactory">
+		<constructor-arg ref="pttDao"/>
+	</bean>
+
+	<bean id="pttFactory" class="com.dventus.ptt.factory.PTTResourceFactory"
+		parent="common">
+	</bean>
+
+	<bean id="api" class="com.dventus.server.servlet.API">
+		<constructor-arg ref="pttFactory"/>
+		<!-- <property name="userPermission" ref="aradaUserPermission"></property> -->
+		<!-- <property name="permissionApi" ref="aradaPermission"></property> -->
+	</bean>
+</beans>

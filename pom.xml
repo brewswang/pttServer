@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>pttServer</artifactId>
+	<packaging>war</packaging>
+	
+	<parent>
+		<groupId>com.dventus</groupId>
+		<artifactId>server</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	
+	<dependencies>
+	
+		<dependency>
+			<groupId>com.dventus</groupId>
+			<artifactId>common-server</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.dventus</groupId>
+			<artifactId>ptt-api</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+	</dependencies>
+</project>
