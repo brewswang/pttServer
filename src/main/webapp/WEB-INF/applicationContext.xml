@@ -27,15 +27,15 @@
 	</bean>
 
 
-    
+
 
 	<bean id="pttEntityManagerFactoryBean"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="pttDataSource" />
-		<!--   <property name="packagesToScan" value="com.dventus.ptt.*:com.dventus.common.*" /> -->
-		 <property name="persistenceUnitName"
-			value="ptt-persistenceunit" />
-		
+		<!-- <property name="packagesToScan" value="com.dventus.ptt.*:com.dventus.common.*" 
+			/> -->
+		<property name="persistenceUnitName" value="ptt-persistenceunit" />
+
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
 		</property>
@@ -58,23 +58,28 @@
 	<bean id="pttTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="pttEntityManagerFactoryBean" />
 	</bean>
-    
+
 	<bean id="pttDao" class="com.dventus.dao.common.Impl.GenericDaoImpl">
-		<constructor-arg ref="pttEntityManagerFactoryBean"/>
+		<constructor-arg ref="pttEntityManagerFactoryBean" />
 	</bean>
 
 	<bean id="common" class="com.dventus.api.common.resource.CommonResourceFactory">
-		<constructor-arg ref="pttDao"/>
+		<constructor-arg ref="pttDao" />
 	</bean>
 
 	<bean id="pttFactory" class="com.dventus.ptt.factory.PTTResourceFactory"
 		parent="common">
 	</bean>
 
+	<bean id="processorBinImpl" class="com.dventus.server.processorfactory.ProcessorBinImpl" />
+
 	<bean id="api" class="com.dventus.server.servlet.API">
-		<constructor-arg ref="pttFactory"/>
+		<constructor-arg ref="pttFactory" />
+
+		<constructor-arg ref="processorBinImpl" />
+		
 		<!-- <property name="userPermission" ref="aradaUserPermission"></property> -->
 		<!-- <property name="permissionApi" ref="aradaPermission"></property> -->
 	</bean>
-    
+
 </beans>

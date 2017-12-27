@@ -14,7 +14,7 @@
 	
 		<dependency>
 			<groupId>com.dventus</groupId>
-			<artifactId>common-server</artifactId>
+			<artifactId>commonServer</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
