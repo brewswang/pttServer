@@ -11,17 +11,30 @@
 	<listener>
 		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
+	
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/applicationContext.xml</param-value>
 	</context-param>
 	<servlet>
-		<servlet-name>MDMServlet</servlet-name>
+		<servlet-name>PTTServlet</servlet-name>
 		<servlet-class>com.dventus.server.servlet.Server</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>TestUploadServlet</servlet-name>
+		<servlet-class>com.dventus.ptt.Server.UploadServer</servlet-class>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
+	
 	<servlet-mapping>
-		<servlet-name>MDMServlet</servlet-name>
-			<url-pattern>/</url-pattern>
+		<servlet-name>PTTServlet</servlet-name>
+			<url-pattern>/ptt</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>TestUploadServlet</servlet-name>
+			<url-pattern>/TestUpload</url-pattern>
 	</servlet-mapping>
 </web-app>
