@@ -77,7 +77,7 @@
 		<constructor-arg ref="pttFactory" />
 
 		<constructor-arg ref="processorBinImpl" />
-		
+
 		<!-- <property name="userPermission" ref="aradaUserPermission"></property> -->
 		<!-- <property name="permissionApi" ref="aradaPermission"></property> -->
 	</bean>
