@@ -3,15 +3,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>pttServer</artifactId>
 	<packaging>war</packaging>
-
+	
 	<parent>
 		<groupId>com.dventus</groupId>
 		<artifactId>dventus</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-
+	
 	<dependencies>
-
+	
 		<dependency>
 			<groupId>com.dventus</groupId>
 			<artifactId>commonServer</artifactId>
@@ -20,58 +20,58 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>com.dventus</groupId>
 			<artifactId>ptt-api</artifactId>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
-
-		<!-- Java 6 = JAX-B Version 2.0 -->
-		<!-- Java 7 = JAX-B Version 2.2.3 -->
-		<!-- Java 8 = JAX-B Version 2.2.8 -->
+		
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<scope>compile</scope>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl -->
+		
 		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.3.0</version>
-			<scope>runtime</scope>
+			<groupId>com.dventus</groupId>
+			<artifactId>CommonAPI</artifactId>
+			<scope>compile</scope>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+		
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.3.0</version>
-			<scope>runtime</scope>
+			<groupId>com.dventus</groupId>
+			<artifactId>PTTModel</artifactId>
+			<scope>compile</scope>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-core</artifactId>
-			<version>2.2.8-b01</version>
-			<scope>runtime</scope>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>compile</scope>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<scope>runtime</scope>
+			<groupId>com.dventus</groupId>
+			<artifactId>MDMDAO</artifactId>
+			<scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
 	</dependencies>
 </project>
