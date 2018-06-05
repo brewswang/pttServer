@@ -18,6 +18,16 @@
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.dventus</groupId>
+			<artifactId>common</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.ftpserver</groupId>
+			<artifactId>ftpserver-core</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.dventus</groupId>
@@ -71,6 +81,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<scope>compile</scope>
+		</dependency>
+		
+			<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		
 	</dependencies>

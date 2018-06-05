@@ -77,9 +77,61 @@
 		<constructor-arg ref="pttFactory" />
 
 		<constructor-arg ref="processorBinImpl" />
-		
+
 		<!-- <property name="userPermission" ref="aradaUserPermission"></property> -->
 		<!-- <property name="permissionApi" ref="aradaPermission"></property> -->
 	</bean>
+
+	 <!--ftp configuration -->
+<!--
+	<bean id="propertyResolver" class="com.dventus.headend.utilities.PropertyResolver">
+		<constructor-arg type="File" value="WEB-INF/users.properties" />
+		<constructor-arg><null/> </constructor-arg>
+		<constructor-arg> <null/> </constructor-arg>
+	</bean>
+	
+	<bean id="pttFtpFactory" class="com.dventus.ptt.ftp.PttFTPFactory">
+		<constructor-arg ref="pttDao" />
+	</bean>
+	
+	<bean id="ftpUsersFactory"
+		class="org.apache.ftpserver.usermanager.PropertiesUserManagerFactory">
+		<property name="file" value="#{propertyResolver.resolvedProperties}" />
+		<property name="passwordEncryptor">
+			<bean class="com.dventus.headend.ftp.PlainPasswordEncryptor">
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="ftpServer" factory-bean="ftpServerFactory"
+		factory-method="createServer" init-method="start" />
+		
+	<bean id="ftpServerFactory" class="org.apache.ftpserver.FtpServerFactory">
+		<property name="userManager">
+			<bean id="ftpUsers" factory-bean="ftpUsersFactory"
+				factory-method="createUserManager" />
+		</property>
+		<property name="listeners">
+			<map>
+				<entry key="ftpListener">
+					<bean factory-bean="ftpListenerFactory" factory-method="createListener" />
+				</entry>
+			</map>
+		</property>
+		<property name="ftplets">
+			<map>
+				<entry key="dxpttFtplet">
+					<bean class="com.dventus.ptt.ftp.Ftplet">
+						<constructor-arg ref="pttFtpFactory" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+
+	</bean>
+
+	<bean id="ftpListenerFactory" class="org.apache.ftpserver.listener.ListenerFactory">
+		<property name="port" value="${ftp.port}" />
+	</bean> -->
 
 </beans>
