@@ -84,27 +84,13 @@ public class Ftplet extends DefaultFtplet {
 
 		try {
 
-			final PttFTP pttFtp = this.getPttFtp();
+			final PttFTP pttFtpLocal = this.getPttFtp();
 
-			if (pttFtp != null) {
-				pttFtp.uploadTestFile(file);
+			if (pttFtpLocal != null) {
+				pttFtpLocal.uploadTestFile(file);
 			}
 
-			/*
-			 * if(subscribers !=null) {
-			 *
-			 * Ftplet.logger.info("There are subscribers on the feeder");
-			 *
-			 * feeder.write(file,subscribers );
-			 *
-			 * } else {
-			 *
-			 * Ftplet.logger.info("No subscribers found");
-			 *
-			 * feeder.write(file);
-			 *
-			 * }
-			 */
+
 
 			if (this.isDeleteAfterUpload()) {
 
