@@ -50,9 +50,9 @@ public class UploadServer extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		final ApplicationContext ctx =  this.getWebApplicationContext();
+		final ApplicationContext ctx = this.getWebApplicationContext();
 
-		if(ctx == null) {
+		if (ctx == null) {
 			throw new ServletException("Context Missing");
 		}
 
@@ -60,18 +60,20 @@ public class UploadServer extends HttpServlet {
 
 		UploadServer.logger.info("request header=" + request.getContentType());
 
-		if (request.getContentType() != null
-				&& request.getContentType().toLowerCase().indexOf("multipart/form-data") > -1) {
+		if (request.getContentType().toLowerCase().indexOf("multipart/form-data") > -1) {
 
 			final Collection<Part> parts = request.getParts();
 			UploadServer.logger.info(parts.toString());
 
 			final TestFileUploadInfo testFileUploadInfo = new TestFileUploadInfo(dao);
 
+			final TestUploadResponse testUploadResponse = new TestUploadResponse();
+
 			for (final Part part : parts) {
 
 				final TestFile testFile = new TestFile();
-				testFile.setFileName(UploadServer.getFileName(part));
+				final String fileName = UploadServer.getFileName(part);
+				testFile.setFileName(fileName);
 				testFile.setFileLength(BigInteger.valueOf(part.getSize()));
 				UploadServer.logger.info("part name=" + UploadServer.getFileName(part));
 
@@ -81,21 +83,23 @@ public class UploadServer extends HttpServlet {
 				}
 
 				try {
-					final TestUploadResponse testUploadResponse = new TestUploadResponse();
 
-					testUploadResponse.setTestUploadResult(testFileUploadInfo.uploadTest(part.getInputStream()));
+					final FileUploadResult fileUploadResult = new FileUploadResult(
+							testFileUploadInfo.uploadTest(part.getInputStream()), fileName);
 
-					testUploadResponse.setStatus("Ok");
-
-					final Gson gson = new Gson();
-
-					final String respJson = gson.toJson(testUploadResponse);
-
-					response.getWriter().write(respJson);
+					testUploadResponse.getFileUploadResults().add(fileUploadResult);
 
 				} catch (final MDMAPIException e) {
 					throw new ServletException(e.getMessage());
 				}
+
+				testUploadResponse.setStatus("Ok");
+
+				final Gson gson = new Gson();
+
+				final String respJson = gson.toJson(testUploadResponse);
+
+				response.getWriter().write(respJson);
 			}
 
 		}

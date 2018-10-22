@@ -41,9 +41,9 @@ public class Ftplet extends DefaultFtplet {
 		if (ftpletContext1 != null) {
 			this.setFtpletContext(ftpletContext1);
 		}
-		if (this.feederFactory != null) {
-			this.pttFtp = this.getPttFTPFactory().createFeeder();
-		}
+
+		this.pttFtp = this.getPttFTPFactory().createFeeder();
+
 	}
 
 	public Ftplet(PttFTPFactory feederFactory1) {
@@ -89,8 +89,6 @@ public class Ftplet extends DefaultFtplet {
 			if (pttFtpLocal != null) {
 				pttFtpLocal.uploadTestFile(file);
 			}
-
-
 
 			if (this.isDeleteAfterUpload()) {
 
