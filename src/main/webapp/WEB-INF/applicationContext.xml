@@ -72,6 +72,16 @@
 	</bean>
 
 	<bean id="processorBinImpl" class="com.dventus.server.processorfactory.ProcessorBinImpl" />
+	
+	<bean id="permission" class="com.dventus.requestPermission.RequestPermission">
+	  <constructor-arg ref="pttDao" />
+	</bean>
+	
+	<bean id="actionMapper" class="com.dventus.server.requestPermission.ActionMapper"/>
+	
+	<bean id="itemTypeMapper" class="com.dventus.server.requestPermission.ItemTypeMapper"/>
+	
+	<bean id="deviceCategoryMapper" class="com.dventus.server.requestPermission.DeviceCategoryMapper"/>
 
 	<bean id="api" class="com.dventus.server.servlet.API">
 		<constructor-arg ref="pttFactory" />

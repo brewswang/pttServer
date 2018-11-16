@@ -84,8 +84,7 @@ public class UploadServer extends HttpServlet {
 
 				try {
 
-					final FileUploadResult fileUploadResult = new FileUploadResult(
-							testFileUploadInfo.uploadTest(part.getInputStream()), fileName);
+					final FileUploadResult fileUploadResult = new FileUploadResult(testFileUploadInfo.uploadTest(part.getInputStream()), fileName);
 
 					testUploadResponse.getFileUploadResults().add(fileUploadResult);
 
