@@ -1,147 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
 						http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
-						http://www.springframework.org/schema/util 
+						http://www.springframework.org/schema/util
 						http://www.springframework.org/schema/util/spring-util-4.2.xsd
 						http://www.springframework.org/schema/aop
 						http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
-						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx
         				http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
         				http://www.springframework.org/schema/context
 						http://www.springframework.org/schema/context/spring-context-4.2.xsd">
 
-	<bean
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<value>WEB-INF/config.properties</value>
-		</property>
-	</bean>
+    <context:component-scan base-package="com.dventus" />
 
-	<bean id="properties"
-		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="location" value="WEB-INF/config.properties" />
-	</bean>
+    <util:properties id="queries" location="classpath:query.properties" />
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <value>WEB-INF/config.properties</value>
+        </property>
+    </bean>
 
+    <bean id="properties"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="location" value="WEB-INF/config.properties" />
+    </bean>
 
+    <bean id="jpaVendorAdapter"
+          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="showSql" value="${showSql}" />
+        <property name="databasePlatform" value="${databasePlatform}" />
+        <property name="generateDdl" value="${generateDdl}" />
+        <property name="database" value="${database}" />
+    </bean>
 
-	<bean id="pttEntityManagerFactoryBean"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="dataSource" ref="pttDataSource" />
-		<!-- <property name="packagesToScan" value="com.dventus.ptt.*:com.dventus.common.*" 
-			/> -->
-		<property name="persistenceUnitName" value="ptt-persistenceunit" />
+    <bean id="dataSource" class="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource">
+        <property name="url" value="${jdbcUrl}" />
+        <property name="user" value="${username}" />
+        <property name="password" value="${password}" />
+    </bean>
 
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-		</property>
-		<property name="jpaProperties">
-			<props>
-				<prop key="hibernate.show_sql">${showSql}</prop>
-				<prop key="hibernate.dialect">${databasePlatform}</prop>
-			</props>
-		</property>
-	</bean>
+    <!-- configure an Atomikos JTA-aware datasource -->
+    <bean id="xaDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean"
+          init-method="init" destroy-method="close">
+        <property name="uniqueResourceName" value="xaDatasource" />
+        <property name="xaDataSource" ref="dataSource" />
+        <property name="poolSize" value="${poolSize}" />
+    </bean>
 
-	<bean id="pttDataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="${pttmysqlUrl}" />
-		<property name="username" value="${username}" />
-		<property name="password" value="${password}" />
-	</bean>
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="xaDataSource" />
+        <property name="persistenceUnitName" value="ptt-persistenceunit" />
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.show_sql">${showSql}</prop>
+                <prop key="hibernate.dialect">${databasePlatform}</prop>
+                <prop key="javax.persistence.lock.timeout">${javax.persistence.lock.timeout}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+            </props>
+        </property>
+    </bean>
 
-	<bean id="pttTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="pttEntityManagerFactoryBean" />
-	</bean>
+    <util:map id="processorBin">
+        <entry key="view" value-ref="viewProcessor" />
+        <entry key="add" value-ref="addProcessor" />
+        <entry key="login" value-ref="loginProcessor" />
+        <entry key="logout" value-ref="logoutProcessor" />
+        <entry key="viewall" value-ref="viewAllProcessor" />
+        <entry key="validate" value-ref="validateProcessor" />
+    </util:map>
 
-	<bean id="pttDao" class="com.dventus.dao.common.Impl.GenericDaoImpl">
-		<constructor-arg ref="pttEntityManagerFactoryBean" />
-	</bean>
+    <util:map id="mapperBin">
+        <entry key="configuration" value-ref="configurationMapper" />
+        <entry key="user" value-ref="userMapper" />
+        <entry key="meter" value-ref="meterMapper" />
+        <entry key="circuitboard" value-ref="circuitBoardMapper" />
+        <entry key="remark" value-ref="remarkMapper" />
+    </util:map>
 
-	<bean id="common" class="com.dventus.api.common.resource.CommonResourceFactory">
-		<constructor-arg ref="pttDao" />
-	</bean>
+    <util:map id="resourceBin">
+        <entry key="remark" value-ref="RemarkResource"/>
+    </util:map>
 
-	<bean id="pttFactory" class="com.dventus.ptt.factory.PTTResourceFactory"
-		parent="common">
-	</bean>
+    <bean id="RemarkResource" class="com.dventus.ptt.resource.RemarkResource"/>
 
-	<bean id="processorBinImpl" class="com.dventus.server.processorfactory.ProcessorBinImpl" />
-	
-	<bean id="permission" class="com.dventus.requestPermission.RequestPermission">
-	  <constructor-arg ref="pttDao" />
-	</bean>
-	
-	<bean id="actionMapper" class="com.dventus.server.requestPermission.ActionMapper"/>
-	
-	<bean id="itemTypeMapper" class="com.dventus.server.requestPermission.ItemTypeMapper"/>
-	
-	<bean id="deviceCategoryMapper" class="com.dventus.server.requestPermission.DeviceCategoryMapper"/>
+    <bean id="ModelMapper" class="org.modelmapper.ModelMapper"/>
 
-	<bean id="api" class="com.dventus.server.servlet.API">
-		<constructor-arg ref="pttFactory" />
+    <bean id="configurationMapper" class="com.dventus.ptt.dto.ConfigurationMapper" >
+        <constructor-arg ref="ModelMapper"/>
+    </bean>
 
-		<constructor-arg ref="processorBinImpl" />
+    <bean id="userMapper" class="com.dventus.ptt.dto.UserMapper">
+        <constructor-arg ref="ModelMapper"/>
+    </bean>
 
-		<!-- <property name="userPermission" ref="aradaUserPermission"></property> -->
-		<!-- <property name="permissionApi" ref="aradaPermission"></property> -->
-	</bean>
+    <bean id="meterMapper" class="com.dventus.ptt.dto.MeterMapper">
+        <constructor-arg ref="ModelMapper"/>
+    </bean>
 
-	 <!--ftp configuration -->
-<!--
-	<bean id="propertyResolver" class="com.dventus.headend.utilities.PropertyResolver">
-		<constructor-arg type="File" value="WEB-INF/users.properties" />
-		<constructor-arg><null/> </constructor-arg>
-		<constructor-arg> <null/> </constructor-arg>
-	</bean>
-	
-	<bean id="pttFtpFactory" class="com.dventus.ptt.ftp.PttFTPFactory">
-		<constructor-arg ref="pttDao" />
-	</bean>
-	
-	<bean id="ftpUsersFactory"
-		class="org.apache.ftpserver.usermanager.PropertiesUserManagerFactory">
-		<property name="file" value="#{propertyResolver.resolvedProperties}" />
-		<property name="passwordEncryptor">
-			<bean class="com.dventus.headend.ftp.PlainPasswordEncryptor">
-			</bean>
-		</property>
-	</bean>
-	
-	<bean id="ftpServer" factory-bean="ftpServerFactory"
-		factory-method="createServer" init-method="start" />
-		
-	<bean id="ftpServerFactory" class="org.apache.ftpserver.FtpServerFactory">
-		<property name="userManager">
-			<bean id="ftpUsers" factory-bean="ftpUsersFactory"
-				factory-method="createUserManager" />
-		</property>
-		<property name="listeners">
-			<map>
-				<entry key="ftpListener">
-					<bean factory-bean="ftpListenerFactory" factory-method="createListener" />
-				</entry>
-			</map>
-		</property>
-		<property name="ftplets">
-			<map>
-				<entry key="dxpttFtplet">
-					<bean class="com.dventus.ptt.ftp.Ftplet">
-						<constructor-arg ref="pttFtpFactory" />
-					</bean>
-				</entry>
-			</map>
-		</property>
+    <bean id="circuitBoardMapper" class="com.dventus.ptt.dto.CircuitBoardMapper">
+        <constructor-arg ref="ModelMapper"/>
+    </bean>
 
-	</bean>
+    <bean id="remarkMapper" class="com.dventus.ptt.dto.RemarkMapper">
+        <constructor-arg ref="ModelMapper"/>
+    </bean>
 
-	<bean id="ftpListenerFactory" class="org.apache.ftpserver.listener.ListenerFactory">
-		<property name="port" value="${ftp.port}" />
-	</bean> -->
+    <bean id="pttContext" class="com.dventus.ptt.servlet.PttContext">
+        <constructor-arg ref="entityManagerFactory" />
+        <constructor-arg ref="queries" />
+        <constructor-arg ref="mapperBin" />
+        <constructor-arg ref="resourceBin" />
+    </bean>
+
+    <bean id="addProcessor" class="com.dventus.ptt.api.AddProcessor">
+        <constructor-arg ref="pttContext" />
+    </bean>
+    <bean id="viewProcessor" class="com.dventus.ptt.api.ViewProcessor">
+        <constructor-arg ref="pttContext" />
+    </bean>
+    <bean id="loginProcessor" class="com.dventus.ptt.api.LoginProcessor">
+        <constructor-arg ref="pttContext"/>
+    </bean>
+
+    <bean id="logoutProcessor" class="com.dventus.ptt.api.LogoutProcessor">
+        <constructor-arg ref="pttContext"/>
+    </bean>
+
+    <bean id="viewAllProcessor" class="com.dventus.ptt.api.ViewAllProcessor">
+        <constructor-arg ref="pttContext"/>
+    </bean>
+
+    <bean id="validateProcessor" class="com.dventus.ptt.api.ValidateProcessor">
+        <constructor-arg ref="pttContext"/>
+    </bean>
 
 </beans>

@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
-	<appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
-		<param name="Threshold" value="INFO"/>
+	 <appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+		<param name="Threshold" value="INFO" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-4r [%t] %-5p %c %x - %m%n" />
 		</layout>
 	</appender>
 	<appender name="FA1" class="org.apache.log4j.FileAppender">
-		<param name="File" value="${catalina.home}/logs/ptt.log" />
-		<!-- <param name="Threshold" value="INFO"/> -->
+		<param name="File" value="${catalina.home}/logs/aradaServer.log" />
+		<param name="Threshold" value="INFO"/>
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-4r [%t] %-5p %c %x - %m%n" />
 		</layout>
+	</appender>	
+	<logger name="org.apache.axis">
+		<level value="INFO" />
+	</logger>
+	<logger name="org.apache.axis.ConfigurationException">
+		<level value="INFO" />
+	</logger>
+	<appender name="socketAppender" class="org.apache.log4j.net.SocketAppender">
+		<param name="Port" value="4557" />
+		<param name="RemoteHost" value="localhost" />
+		<param name="ReconnectionDelay" value="5000" />
+		<param name="LocationINFO" value="true" />
+		<param name="Threshold" value="INFO" />
 	</appender>
-	<!--- inherit level and appenders from root -->
-
-	<!--  <logger name="org.quartz">
-		<level value="WARN" />
-	</logger>
-	<logger name="httpclient.wire">
-		<level value="ERROR" />
-	</logger>
-	<logger name="org.apache.http">
-		<level value="WARN" />
-	</logger> -->
-	
 	<root>
 		<level value="INFO" />
 		<appender-ref ref="ConsoleAppender" />
-		<appender-ref ref="FA1" />		
-	</root>
+		<appender-ref ref="FA1" />
+		<appender-ref ref="socketAppender" />
+	</root>  
 </log4j:configuration>
