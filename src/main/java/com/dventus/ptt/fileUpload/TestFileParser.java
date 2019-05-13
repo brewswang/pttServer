@@ -7,6 +7,7 @@ import com.opencsv.CSVReader;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.io.IOException;
 import java.io.InputStream;
@@ -246,7 +247,20 @@ public class TestFileParser {
 
                 query.setParameter(QueryParameter.id.name(), meterId);
 
-                Meter meter = (Meter) query.getSingleResult();
+                Meter meter = null;
+
+                try {
+
+                    meter = (Meter) query.getSingleResult();
+
+                } catch (NoResultException ex) {
+
+                    // do not parse test for unrelated meter
+                    response.setNotFound(meterId);
+
+                    continue;
+
+                }
 
                 if (meter == null) {
 
@@ -296,7 +310,7 @@ public class TestFileParser {
                 this.parse_T_10_OperatingCurrentReactiveTest(headerRow, meterTestData, meter, previousTests, currentStartTime, currentEndTime);
                 this.parse_T_11_StartingCurrentReactiveTest(headerRow, meterTestData, meter, previousTests, currentStartTime, currentEndTime);
                 this.parse_T_12_NoLoadReactiveTest(headerRow, meterTestData, meter, previousTests, currentStartTime, currentEndTime);
-                this.parse_T_13_AccuracyTest(headerRow, meterTestData, meter, previousTests, currentStartTime, currentEndTime, entityManager);
+                this.parse_T_13_AccuracyTest(headerRow, meterTestData, meter, previousTests, currentStartTime, currentEndTime);
                 this.parse_T_14_PLCTest(headerRow, meterTestData, meter, previousTests, currentStartTime, currentEndTime);
                 this.parse_T_15_EnergyAndTamperingClearTest(headerRow, meterTestData, meter, previousTests, currentStartTime, currentEndTime);
 
@@ -321,20 +335,26 @@ public class TestFileParser {
                     }
                 }
 
+                logger.info("Merging meterId ============================== " + meterId);
+
                 // Update meter data in database
+                if (!entityManager.getTransaction().isActive()) {
+
+                    entityManager.getTransaction().begin();
+
+                }
+
                 entityManager.merge(meter);
 
                 entityManager.getTransaction().commit();
 
             }
 
-        }
-        catch (ArrayIndexOutOfBoundsException ex) {
+        } catch (ArrayIndexOutOfBoundsException ex) {
 
             TestFileParser.logger.error(ex);
 
-        }
-        finally {
+        }  finally {
 
             if (entityManager.getTransaction().isActive()) {
 
@@ -1494,7 +1514,7 @@ public class TestFileParser {
 
     private void parse_T_13_AccuracyTest(String[] headerRow, String[] meterTestData, Meter meter,
                                                TestBenchResults previousTests, String currentStartTime,
-                                               String currentEndTime, EntityManager entityManager) {
+                                               String currentEndTime) {
 
 
         String previousEndTime = previousTests.getAccuracyNeutralEndTime();
@@ -1521,8 +1541,6 @@ public class TestFileParser {
                 if(accuracyTestsNeutrals == null) {
                     accuracyTestsNeutrals = new ArrayList<>();
                 }
-                // add to database
-                entityManager.persist(accuracyTestsNeutral);
                 accuracyTestsNeutrals.add(accuracyTestsNeutral);
                 previousTests.setAccuracyTestNeutral(accuracyTestsNeutrals);
 
