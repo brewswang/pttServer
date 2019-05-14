@@ -109,10 +109,6 @@
 
         <dependency>
             <groupId>com.dventus</groupId>
-            <artifactId>common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.dventus</groupId>
             <artifactId>PTTModel</artifactId>
         </dependency>
 
